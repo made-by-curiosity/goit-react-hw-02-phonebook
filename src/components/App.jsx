@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { nanoid } from 'nanoid';
 import { ContactList } from 'components/ContactList/ContactList';
 import { AddForm } from 'components/Form/Form';
 import { Container } from './Container/Container';
 import { Section } from './Section/Section';
+import { Filter } from './Filter/Filter';
 
 export class App extends Component {
   state = {
@@ -15,16 +17,70 @@ export class App extends Component {
     filter: '',
   };
 
+  handleSubmit = (values, { resetForm }) => {
+    const hasContact = this.state.contacts.some(
+      contact => values.name === contact.name
+    );
+
+    if (hasContact) {
+      alert(`${values.name} is already in contacts`);
+      resetForm();
+      return;
+    }
+
+    this.setState(({ contacts }) => {
+      const newContact = {
+        id: nanoid(),
+        ...values,
+      };
+
+      return { contacts: [newContact, ...contacts] };
+    });
+
+    resetForm();
+  };
+
+  handleFilter = e => {
+    this.setState({
+      filter: e.target.value,
+    });
+  };
+
+  filteredContacts = () => {
+    const { contacts, filter } = this.state;
+
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
+  handleDelete = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
   render() {
-    const { contacts } = this.state;
+    const filteredContacts = this.filteredContacts();
+    const { filter } = this.state;
 
     return (
       <Container titleText="Phonebook">
         <Section>
-          <AddForm />
+          <AddForm onSubmit={this.handleSubmit} />
         </Section>
         <Section sectionTitle="Contacts">
-          <ContactList contacts={contacts} />
+          <Filter
+            filterTitle="Find contacts by name"
+            filterValue={filter}
+            onFilter={this.handleFilter}
+          />
+          <ContactList
+            contacts={filteredContacts}
+            onDelete={this.handleDelete}
+          />
         </Section>
       </Container>
     );
