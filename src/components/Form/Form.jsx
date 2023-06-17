@@ -44,7 +44,10 @@ export const AddForm = ({ onSubmit }) => {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={(values, { resetForm }) => {
+        onSubmit(values);
+        resetForm();
+      }}
       validationSchema={schema}
     >
       <PhonebookForm>

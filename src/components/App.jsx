@@ -17,14 +17,14 @@ export class App extends Component {
     filter: '',
   };
 
-  handleSubmit = (values, { resetForm }) => {
-    const hasContact = this.state.contacts.some(
+  handleSubmit = values => {
+    const hasContact = this.state.contacts.find(
       contact => values.name === contact.name
     );
 
     if (hasContact) {
       alert(`${values.name} is already in contacts`);
-      resetForm();
+
       return;
     }
 
@@ -36,8 +36,6 @@ export class App extends Component {
 
       return { contacts: [newContact, ...contacts] };
     });
-
-    resetForm();
   };
 
   handleFilter = e => {

@@ -13,5 +13,5 @@ export const Container = ({ titleText, children }) => {
 
 Container.propTypes = {
   titleText: PropTypes.string,
-  children: PropTypes.arrayOf(PropTypes.node),
+  children: PropTypes.node,
 };
